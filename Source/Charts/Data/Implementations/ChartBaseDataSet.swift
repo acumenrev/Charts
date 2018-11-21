@@ -24,7 +24,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         valueColors.append(NSUIColor.black)
     }
     
-    @objc public init(label: String?)
+    public init(label: String?)
     {
         super.init()
         
@@ -126,12 +126,12 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         fatalError("addEntryOrdered is not implemented in ChartBaseDataSet")
     }
     
-    @discardableResult open func removeEntry(_ entry: ChartDataEntry) -> Bool
+    open func removeEntry(_ entry: ChartDataEntry) -> Bool
     {
         fatalError("removeEntry is not implemented in ChartBaseDataSet")
     }
     
-    @discardableResult open func removeEntry(index: Int) -> Bool
+    open func removeEntry(index: Int) -> Bool
     {
         if let entry = entryForIndex(index)
         {
@@ -140,7 +140,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         return false
     }
     
-    @discardableResult open func removeEntry(x: Double) -> Bool
+    open func removeEntry(x: Double) -> Bool
     {
         if let entry = entryForXValue(x, closestToY: Double.nan)
         {
@@ -149,7 +149,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         return false
     }
     
-    @discardableResult open func removeFirst() -> Bool
+    open func removeFirst() -> Bool
     {
         if entryCount > 0
         {
@@ -161,7 +161,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
         return false
     }
     
-    @discardableResult open func removeLast() -> Bool
+    open func removeLast() -> Bool
     {
         if entryCount > 0
         {
@@ -235,7 +235,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     /// Sets colors to a single color a specific alpha value.
     /// - parameter color: the color to set
     /// - parameter alpha: alpha to apply to the set `color`
-    @objc open func setColor(_ color: NSUIColor, alpha: CGFloat)
+    open func setColor(_ color: NSUIColor, alpha: CGFloat)
     {
         setColor(color.withAlphaComponent(alpha))
     }
@@ -243,7 +243,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     /// Sets colors with a specific alpha value.
     /// - parameter colors: the colors to set
     /// - parameter alpha: alpha to apply to the set `colors`
-    @objc open func setColors(_ colors: [NSUIColor], alpha: CGFloat)
+    open func setColors(_ colors: [NSUIColor], alpha: CGFloat)
     {
         var colorsWithAlpha = colors
         
@@ -411,7 +411,7 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     
     // MARK: - NSCopying
     
-    @objc open func copyWithZone(_ zone: NSZone?) -> AnyObject
+    open func copyWithZone(_ zone: NSZone?) -> AnyObject
     {
         let copy = type(of: self).init()
         

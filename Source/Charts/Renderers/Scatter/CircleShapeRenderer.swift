@@ -10,7 +10,7 @@
 //
 import Foundation
 import CoreGraphics
-
+import UIKit
 open class CircleShapeRenderer : NSObject, IShapeRenderer
 {
     open func renderShape(

@@ -9,7 +9,9 @@
 //  https://github.com/danielgindi/Charts
 //
 import Foundation
+
 import CoreGraphics
+import UIKit
 
 open class ChevronDownShapeRenderer : NSObject, IShapeRenderer
 {

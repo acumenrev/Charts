@@ -19,9 +19,9 @@ import CoreGraphics
 
 open class RadarChartRenderer: LineRadarRenderer
 {
-    @objc open weak var chart: RadarChartView?
+    open weak var chart: RadarChartView?
 
-    @objc public init(chart: RadarChartView, animator: Animator, viewPortHandler: ViewPortHandler)
+    public init(chart: RadarChartView?, animator: Animator?, viewPortHandler: ViewPortHandler?)
     {
         super.init(animator: animator, viewPortHandler: viewPortHandler)
         
@@ -55,7 +55,10 @@ open class RadarChartRenderer: LineRadarRenderer
     /// - parameter mostEntries: the entry count of the dataset with the most entries
     internal func drawDataSet(context: CGContext, dataSet: IRadarChartDataSet, mostEntries: Int)
     {
-        guard let chart = chart else { return }
+        guard let
+            chart = chart,
+            let animator = animator
+            else { return }
         
         context.saveGState()
         
@@ -138,7 +141,8 @@ open class RadarChartRenderer: LineRadarRenderer
     {
         guard
             let chart = chart,
-            let data = chart.data
+            let data = chart.data,
+            let animator = animator
             else { return }
         
         let phaseX = animator.phaseX
@@ -190,8 +194,8 @@ open class RadarChartRenderer: LineRadarRenderer
                             viewPortHandler: viewPortHandler),
                         point: CGPoint(x: p.x, y: p.y - yoffset - valueFont.lineHeight),
                         align: .center,
-                        attributes: [NSAttributedStringKey.font: valueFont,
-                            NSAttributedStringKey.foregroundColor: dataSet.valueTextColorAt(j)]
+                        attributes: [NSFontAttributeName: valueFont,
+                            NSForegroundColorAttributeName: dataSet.valueTextColorAt(j)]
                     )
                 }
                 
@@ -218,9 +222,9 @@ open class RadarChartRenderer: LineRadarRenderer
         drawWeb(context: context)
     }
     
-    private var _webLineSegmentsBuffer = [CGPoint](repeating: CGPoint(), count: 2)
+    fileprivate var _webLineSegmentsBuffer = [CGPoint](repeating: CGPoint(), count: 2)
     
-    @objc open func drawWeb(context: CGContext)
+    open func drawWeb(context: CGContext)
     {
         guard
             let chart = chart,
@@ -289,13 +293,14 @@ open class RadarChartRenderer: LineRadarRenderer
         context.restoreGState()
     }
     
-    private var _highlightPointBuffer = CGPoint()
+    fileprivate var _highlightPointBuffer = CGPoint()
 
     open override func drawHighlighted(context: CGContext, indices: [Highlight])
     {
         guard
             let chart = chart,
-            let radarData = chart.data as? RadarChartData
+            let radarData = chart.data as? RadarChartData,
+            let animator = animator
             else { return }
         
         context.saveGState()

@@ -16,12 +16,18 @@ import CoreGraphics
 open class AxisRendererBase: Renderer
 {
     /// base axis this axis renderer works with
-    @objc open var axis: AxisBase?
+    open var axis: AxisBase?
     
     /// transformer to transform values to screen pixels and return
-    @objc open var transformer: Transformer?
-
-    @objc public init(viewPortHandler: ViewPortHandler, transformer: Transformer?, axis: AxisBase?)
+    open var transformer: Transformer?
+    
+    
+    public override init()
+    {
+        super.init()
+    }
+    
+    public init(viewPortHandler: ViewPortHandler?, transformer: Transformer?, axis: AxisBase?)
     {
         super.init(viewPortHandler: viewPortHandler)
         
@@ -30,25 +36,25 @@ open class AxisRendererBase: Renderer
     }
     
     /// Draws the axis labels on the specified context
-    @objc open func renderAxisLabels(context: CGContext)
+    open func renderAxisLabels(context: CGContext)
     {
         fatalError("renderAxisLabels() cannot be called on AxisRendererBase")
     }
     
     /// Draws the grid lines belonging to the axis.
-    @objc open func renderGridLines(context: CGContext)
+    open func renderGridLines(context: CGContext)
     {
         fatalError("renderGridLines() cannot be called on AxisRendererBase")
     }
     
     /// Draws the line that goes alongside the axis.
-    @objc open func renderAxisLine(context: CGContext)
+    open func renderAxisLine(context: CGContext)
     {
         fatalError("renderAxisLine() cannot be called on AxisRendererBase")
     }
     
     /// Draws the LimitLines associated with this axis to the screen.
-    @objc open func renderLimitLines(context: CGContext)
+    open func renderLimitLines(context: CGContext)
     {
         fatalError("renderLimitLines() cannot be called on AxisRendererBase")
     }
@@ -56,36 +62,41 @@ open class AxisRendererBase: Renderer
     /// Computes the axis values.
     /// - parameter min: the minimum value in the data object for this axis
     /// - parameter max: the maximum value in the data object for this axis
-    @objc open func computeAxis(min: Double, max: Double, inverted: Bool)
+    open func computeAxis(min: Double, max: Double, inverted: Bool)
     {
         var min = min, max = max
         
         if let transformer = self.transformer
         {
             // calculate the starting and entry point of the y-labels (depending on zoom / contentrect bounds)
-            if viewPortHandler.contentWidth > 10.0 && !viewPortHandler.isFullyZoomedOutY
+            if let viewPortHandler = viewPortHandler
             {
-                let p1 = transformer.valueForTouchPoint(CGPoint(x: viewPortHandler.contentLeft, y: viewPortHandler.contentTop))
-                let p2 = transformer.valueForTouchPoint(CGPoint(x: viewPortHandler.contentLeft, y: viewPortHandler.contentBottom))
-                
-                if !inverted
+                if viewPortHandler.contentWidth > 10.0 && !viewPortHandler.isFullyZoomedOutY
                 {
-                    min = Double(p2.y)
-                    max = Double(p1.y)
-                }
-                else
-                {
-                    min = Double(p1.y)
-                    max = Double(p2.y)
+                    let p1 = transformer.valueForTouchPoint(CGPoint(x: viewPortHandler.contentLeft, y: viewPortHandler.contentTop))
+                    let p2 = transformer.valueForTouchPoint(CGPoint(x: viewPortHandler.contentLeft, y: viewPortHandler.contentBottom))
+                    
+                    if !inverted
+                    {
+                        min = Double(p2.y)
+                        max = Double(p1.y)
+                    }
+                    else
+                    {
+                        min = Double(p1.y)
+                        max = Double(p2.y)
+                    }
                 }
             }
         }
         
         computeAxisValues(min: min, max: max)
+        NotificationCenter.default.post(name: Notification.Name.init(AppConstants.Notifications.measurementGraphLeftAxisFinishedComputation), object: CGPoint.init(x: min, y: max))
+//        print("compueteAxis \(min) \(max)")
     }
     
     /// Sets up the axis values. Computes the desired number of labels between the two given extremes.
-    @objc open func computeAxisValues(min: Double, max: Double)
+    open func computeAxisValues(min: Double, max: Double)
     {
         guard let axis = self.axis else { return }
         

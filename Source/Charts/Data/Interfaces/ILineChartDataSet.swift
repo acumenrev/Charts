@@ -30,8 +30,24 @@ public protocol ILineChartDataSet: ILineRadarChartDataSet
     /// **default**: 0.2
     var cubicIntensity: CGFloat { get set }
     
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    var drawCubicEnabled: Bool { get set }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    var isDrawCubicEnabled: Bool { get }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    var drawSteppedEnabled: Bool { get set }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    var isDrawSteppedEnabled: Bool { get }
+
     /// The radius of the drawn circles.
     var circleRadius: CGFloat { get set }
+    
+    var useHighlightedCircleRadiuses : Bool { get set }
+    var circleRadiusForNonhighlighted : CGFloat { get set }
+    var circleRadiusForHighlighted : CGFloat { get set }
     
     /// The hole radius of the drawn circles.
     var circleHoleRadius: CGFloat { get set }

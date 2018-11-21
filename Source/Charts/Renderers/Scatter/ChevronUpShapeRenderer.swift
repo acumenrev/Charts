@@ -10,6 +10,7 @@
 //
 import Foundation
 import CoreGraphics
+import UIKit
 
 open class ChevronUpShapeRenderer : NSObject, IShapeRenderer
 {

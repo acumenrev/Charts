@@ -24,7 +24,7 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
         case horizontalBezier
     }
     
-    private func initialize()
+    fileprivate func initialize()
     {
         // default color
         circleColors.append(NSUIColor(red: 140.0/255.0, green: 234.0/255.0, blue: 255.0/255.0, alpha: 1.0))
@@ -51,7 +51,7 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
     /// **default**: Linear
     open var mode: Mode = Mode.linear
     
-    private var _cubicIntensity = CGFloat(0.2)
+    fileprivate var _cubicIntensity = CGFloat(0.2)
     
     /// Intensity for cubic lines (min = 0.05, max = 1)
     ///
@@ -75,26 +75,71 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
             }
         }
     }
-        
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    open var drawCubicEnabled: Bool
+    {
+        get
+        {
+            return mode == .cubicBezier
+        }
+        set
+        {
+            mode = newValue ? LineChartDataSet.Mode.cubicBezier : LineChartDataSet.Mode.linear
+        }
+    }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    open var isDrawCubicEnabled: Bool { return drawCubicEnabled }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    open var drawSteppedEnabled: Bool
+    {
+        get
+        {
+            return mode == .stepped
+        }
+        set
+        {
+            mode = newValue ? LineChartDataSet.Mode.stepped : LineChartDataSet.Mode.linear
+        }
+    }
+    
+    @available(*, deprecated: 1.0, message: "Use `mode` instead.")
+    open var isDrawSteppedEnabled: Bool { return drawSteppedEnabled }
+    
     /// The radius of the drawn circles.
     open var circleRadius = CGFloat(8.0)
-    
+    open var useHighlightedCircleRadiuses : Bool = false
+    open var circleRadiusForNonhighlighted = CGFloat(4.0)
+    open var circleRadiusForHighlighted = CGFloat(4.0)
     /// The hole radius of the drawn circles
     open var circleHoleRadius = CGFloat(4.0)
     
     open var circleColors = [NSUIColor]()
+    open var useCircleHighlightColors = false
+    open var circleNonhighlightedColor : NSUIColor = .white
+    open var circleHighlightedColor : NSUIColor = .white
     
     /// - returns: The color at the given index of the DataSet's circle-color array.
     /// Performs a IndexOutOfBounds check by modulus.
     open func getCircleColor(atIndex index: Int) -> NSUIColor?
     {
-        let size = circleColors.count
-        let index = index % size
-        if index >= size
-        {
-            return nil
+        if self.useCircleHighlightColors == true {
+            if self.values.count > index {
+                let value = self.values[index]
+                return value.isHighlighted == true ? circleHighlightedColor : circleNonhighlightedColor
+            }
+            return circleNonhighlightedColor
+        } else {
+            let size = circleColors.count
+            let index = index % size
+            if index >= size
+            {
+                return nil
+            }
+            return circleColors[index]
         }
-        return circleColors[index]
     }
     
     /// Sets the one and ONLY color that should be used for this DataSet.
@@ -144,7 +189,7 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
     open var lineCapType = CGLineCap.butt
     
     /// formatter for customizing the position of the fill-line
-    private var _fillFormatter: IFillFormatter = DefaultFillFormatter()
+    fileprivate var _fillFormatter: IFillFormatter = DefaultFillFormatter()
     
     /// Sets a custom IFillFormatter to the chart that handles the position of the filled-line for each DataSet. Set this to null to use the default logic.
     open var fillFormatter: IFillFormatter?
@@ -155,7 +200,14 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
         }
         set
         {
-            _fillFormatter = newValue ?? DefaultFillFormatter()
+            if newValue == nil
+            {
+                _fillFormatter = DefaultFillFormatter()
+            }
+            else
+            {
+                _fillFormatter = newValue!
+            }
         }
     }
     
@@ -166,6 +218,12 @@ open class LineChartDataSet: LineRadarChartDataSet, ILineChartDataSet
         let copy = super.copyWithZone(zone) as! LineChartDataSet
         copy.circleColors = circleColors
         copy.circleRadius = circleRadius
+        copy.useCircleHighlightColors = useCircleHighlightColors
+        copy.circleRadiusForNonhighlighted = circleRadiusForNonhighlighted
+        copy.circleRadiusForHighlighted = circleRadiusForHighlighted
+        copy.circleHighlightedColor = circleHighlightedColor
+        copy.circleNonhighlightedColor = circleNonhighlightedColor
+        copy.useHighlightedCircleRadiuses = useHighlightedCircleRadiuses
         copy.cubicIntensity = cubicIntensity
         copy.lineDashPhase = lineDashPhase
         copy.lineDashLengths = lineDashLengths
